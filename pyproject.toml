@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "discourse-md"
+version = "0.1.0"
+description = "Download Discourse threads in markdown format"
+readme = "README.md"
+dependencies = [
+    "typer",
+    "requests",
+]
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+dev = [
+    "poethepoet",
+    "black",
+    "ruff",
+]
+
+[project.urls]
+Homepage = "https://github.com/Andrej730/discourse-md"
+Repository = "https://github.com/Andrej730/discourse-md"
+
+[project.scripts]
+discourse-md = "discourse_md:main"
+
+[tool.setuptools]
+py-modules = ["discourse_md"]
+
+[tool.poe.tasks]
+
+ruff = "ruff check"
+ruff-imports = "ruff check --select I --fix"
+black = "black ."
+test = "pytest test"
+
+format.sequence = ["black", "ruff-imports", "ruff"]

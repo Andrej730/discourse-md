@@ -1,0 +1,46 @@
+---
+name: CI
+
+"on":
+  push:
+  workflow_dispatch:
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Run pytest
+        id: pytest
+        run: |
+          uv venv --python=3.10
+          uv pip install -e .[test]
+          if [ "${{ runner.debug }}" = "1" ]; then
+            DEBUG_FLAGS="--capture=no -vv"
+          fi
+          # .xml is used by `test-summary/action`.
+          uv run pytest --junit-xml=.test_report.xml ${DEBUG_FLAG}
+        continue-on-error: true
+
+      - name: Upload test summary
+        uses: test-summary/action@v2.4
+        with:
+          paths: .test_report.xml
+
+      - name: Black formatter
+        id: black
+        uses: psf/black@stable
+        continue-on-error: true
+
+      - name: Final check
+        run: |
+          ERROR=0
+          if [ "${{ steps.pytest.outcome }}" != "success" ]; then
+            echo "::error::Tests failed, see 'Run pytest' step for the details." && ERROR=1
+          fi
+          if [ "${{ steps.black.outcome }}" != "success" ]; then
+            echo "::error::Black formatting check failed, see 'Black formatter' step for the details." && ERROR=1
+          fi
+          exit $ERROR
