@@ -22,12 +22,14 @@ jobs:
           fi
           source .venv/bin/activate
           which python
+          ls
           # .xml is used by `test-summary/action`.
           uv run pytest --junit-xml=.test_report.xml ${DEBUG_FLAG}
         continue-on-error: true
 
       - name: Run pytest
         run: |
+          ls
           which python
         continue-on-error: true
 
