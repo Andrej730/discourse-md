@@ -20,6 +20,8 @@ jobs:
           if [ "${{ runner.debug }}" = "1" ]; then
             DEBUG_FLAGS="--capture=no -vv"
           fi
+          source .venv/bin/activate
+          which python
           # .xml is used by `test-summary/action`.
           uv run pytest --junit-xml=.test_report.xml ${DEBUG_FLAG}
         continue-on-error: true
