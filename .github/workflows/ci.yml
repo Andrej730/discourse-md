@@ -27,11 +27,9 @@ jobs:
           uv run pytest --junit-xml=.test_report.xml ${DEBUG_FLAG}
         continue-on-error: true
 
-      - name: Run pytest
-        run: |
-          ls
-          which python
-        continue-on-error: true
+      - uses: dariocurr/pytest-summary@main
+        with:
+          venv: .venv
 
       - name: Upload test summary
         uses: test-summary/action@v2.4
